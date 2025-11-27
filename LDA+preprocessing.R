@@ -8,21 +8,20 @@ library(MASS)
 #--------------------------------------------------
 df <- read.csv("D:/project/hkmu/s460f/Mental_Health_and_Social_Media_Balance_Dataset.csv")
 
-
-
+#--------------------------------------------------
 # Data inspection
-head(my_data)
-str(my_data)
-summary(my_data)
-dim(my_data)
-names(my_data) 
+#--------------------------------------------------
+head(df)
+str(df)
+summary(df)
+dim(df)
+names(df)
 
-missing_summary <- colSums(is.na(my_data))
+missing_summary <- colSums(is.na(df))
 print(missing_summary)
 
-
 #--------------------------------------------------
-# 2. Create a target variable (stress category)
+# 2. Create the target variable (Screen Time Category)
 #--------------------------------------------------
 df <- df %>%
   mutate(ScreenTime_Category =
@@ -55,10 +54,11 @@ test_p <- test
 test_p[, numeric_vars] <- predict(preproc, test[, numeric_vars])
 
 #--------------------------------------------------
-# 5. Remove useless variables
+# 5. Remove variables that cause LDA errors
 #--------------------------------------------------
-train_p2 <- train_p %>% select(-User_ID, -Social_Media_Platform)
-test_p2  <- test_p  %>% select(-User_ID, -Social_Media_Platform)
+train_p2 <- train_p %>% dplyr::select(-User_ID, -Social_Media_Platform)
+test_p2  <- test_p  %>% dplyr::select(-User_ID, -Social_Media_Platform)
+
 
 #--------------------------------------------------
 # 6. Fit LDA model
@@ -79,21 +79,22 @@ cm <- table(test_p2$ScreenTime_Category, pred_class)
 confusionMatrix(cm)
 
 #--------------------------------------------------
-# 9. LDA PLOTS (Added)
+# 9. LDA Plots
 #--------------------------------------------------
 par(mar = c(4, 4, 2, 1))
-# ---- Plot 1: LD1 vs LD2 (Scatter Plot) ----
+
+# ---- Plot 1: LD1 vs LD2 ----
 plot(pred$x[,1], pred$x[,2],
      col = as.numeric(test_p2$ScreenTime_Category),
      pch = 19,
      xlab = "LD1",
      ylab = "LD2",
-     main = "LDA: Daily Screen Time Category Separation (LD1 vs LD2)")
+     main = "LDA: Daily Screen Time Category Separation")
 legend("topright",
        legend = levels(test_p2$ScreenTime_Category),
        col = 1:length(levels(test_p2$ScreenTime_Category)),
        pch = 19)
 
-# ---- Plot 2: LD1 Distribution ----
+# ---- Plot 2: LD1 distribution ----
 plot(lda_model, dimen = 1, type = "b",
      main = "LDA Plot (LD1) – Daily Screen Time Category")
