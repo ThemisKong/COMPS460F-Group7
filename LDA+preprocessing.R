@@ -1,4 +1,4 @@
-library(readr)
+
 library(dplyr)
 library(caret)
 library(MASS)
@@ -98,3 +98,4 @@ legend("topright",
 # ---- Plot 2: LD1 distribution ----
 plot(lda_model, dimen = 1, type = "b",
      main = "LDA Plot (LD1) – Daily Screen Time Category")
+
